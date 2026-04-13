@@ -23,7 +23,7 @@ export const metadata: Metadata = {
  */
 export default function ScoreKeepingPage() {
   return (
-    <main className="w-full h-screen flex flex-col bg-white">
+    <main className="w-full h-screen flex flex-col bg-white" aria-label="scorekeeping">
       {/* Timer at top */}
       <ScoreboardTimerContainer initialTime={600} />
 

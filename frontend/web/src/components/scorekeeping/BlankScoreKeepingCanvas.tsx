@@ -24,9 +24,8 @@ import type { BlankScoreKeeperProps } from '@/types/scorekeeping.types'
  */
 export const BlankScoreKeepingCanvas: React.FC<BlankScoreKeeperProps> = () => {
   return (
-    <main
+    <div
       className="w-full h-screen bg-white flex items-center justify-center"
-      role="main"
       aria-label="Scorekeeping canvas"
     >
       {/* 
@@ -36,7 +35,7 @@ export const BlankScoreKeepingCanvas: React.FC<BlankScoreKeeperProps> = () => {
         - Game controls
         - Statistics panel
       */}
-    </main>
+    </div>
   )
 }
 

@@ -218,7 +218,7 @@ test.describe('Scorekeeping Page', () => {
       let bgColor = await playButton.evaluate((el) => {
         return window.getComputedStyle(el as HTMLElement).backgroundColor
       })
-      expect(bgColor).toContain('rgb') // Has a color
+      expect(bgColor).toMatch(/rgb|lab|lch|oklch/) // Has a color
 
       // Click to toggle
       await playButton.click()
@@ -229,7 +229,7 @@ test.describe('Scorekeeping Page', () => {
       bgColor = await pauseButton.evaluate((el) => {
         return window.getComputedStyle(el as HTMLElement).backgroundColor
       })
-      expect(bgColor).toContain('rgb') // Still has a color (different from before)
+      expect(bgColor).toMatch(/rgb|lab|lch|oklch/) // Still has a color (different from before)
     })
 
     test('pause and resume timer works correctly', async ({ page }) => {
