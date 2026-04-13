@@ -1,5 +1,6 @@
 import { Metadata } from 'next'
 import { BlankScoreKeepingCanvas } from '@/components/scorekeeping/BlankScoreKeepingCanvas'
+import { ScoreboardTimerContainer } from '@/components/scorekeeping/ScoreboardTimerContainer'
 
 export const metadata: Metadata = {
   title: 'Scorekeeping - theStatsApp',
@@ -11,15 +12,25 @@ export const metadata: Metadata = {
  * Scorekeeping Page
  *
  * This page serves as the main entry point for the basketball scorekeeping
- * application. It displays a minimal, blank canvas that can be extended with
- * game state, controls, and statistics.
+ * application. It displays a countdown timer at the top and a blank canvas
+ * that can be extended with game state, controls, and statistics.
  *
  * Route: /scorekeeping
+ *
+ * Features:
+ * - ScoreboardTimerContainer: Game timer with start/stop toggle (Feature 004)
+ * - BlankScoreKeepingCanvas: Placeholder canvas for future features (Feature 003)
  */
 export default function ScoreKeepingPage() {
   return (
-    <div className="w-full h-screen">
-      <BlankScoreKeepingCanvas />
-    </div>
+    <main className="w-full h-screen flex flex-col bg-white">
+      {/* Timer at top */}
+      <ScoreboardTimerContainer initialTime={600} />
+
+      {/* Canvas area */}
+      <div className="flex-1 w-full flex items-center justify-center">
+        <BlankScoreKeepingCanvas />
+      </div>
+    </main>
   )
 }
