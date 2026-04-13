@@ -35,7 +35,7 @@ export const ScoreboardTimer: React.FC<ScoreboardTimerProps> = ({
         <time
           className={`text-5xl md:text-6xl font-bold font-mono tracking-wider ${
             currentTime === 0 ? 'text-red-600' : 'text-slate-900'
-          } ${isRunning ? 'animate-pulse' : ''}`}
+          }`}
           dateTime={`PT${formatted.minutes}M${formatted.seconds}S`}
           role="status"
           aria-label={`${formatted.minutes} minutes ${formatted.seconds} seconds remaining`}
@@ -54,7 +54,7 @@ export const ScoreboardTimer: React.FC<ScoreboardTimerProps> = ({
           }`}
           aria-hidden="true"
         >
-          {isRunning ? '● Running' : currentTime === 0 ? '● Expired' : '○ Paused'}
+          {isRunning ? '● Running' : currentTime === 0 ? '● End' : '○ Paused'}
         </div>
       </div>
     </div>

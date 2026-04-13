@@ -37,9 +37,10 @@ export const TimerToggle: React.FC<TimerToggleProps> = ({
       aria-label={label}
       aria-pressed={isRunning}
       className={`
-        h-12 w-12 md:h-14 md:w-14
+        px-8 py-3 md:px-10 md:py-4
         flex items-center justify-center
         rounded-full
+        font-semibold text-base md:text-lg
         transition-all duration-200
         focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500
         ${
@@ -52,28 +53,7 @@ export const TimerToggle: React.FC<TimerToggleProps> = ({
         ${className}
       `}
     >
-      {/* Icon: Play or Pause */}
-      {isRunning ? (
-        // Pause icon (two vertical bars)
-        <svg
-          className="w-6 h-6 md:w-7 md:h-7"
-          fill="currentColor"
-          viewBox="0 0 24 24"
-          aria-hidden="true"
-        >
-          <path d="M6 4h4v16H6V4zm8 0h4v16h-4V4z" />
-        </svg>
-      ) : (
-        // Play icon (triangle pointing right)
-        <svg
-          className="w-6 h-6 md:w-7 md:h-7 ml-1"
-          fill="currentColor"
-          viewBox="0 0 24 24"
-          aria-hidden="true"
-        >
-          <path d="M8 5v14l11-7z" />
-        </svg>
-      )}
+      <span>{isRunning ? 'Stop' : 'Start'}</span>
     </button>
   )
 }

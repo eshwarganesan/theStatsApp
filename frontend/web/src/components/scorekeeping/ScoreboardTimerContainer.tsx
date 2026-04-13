@@ -137,10 +137,6 @@ export const ScoreboardTimerContainer: React.FC<ScoreboardTimerContainerProps> =
         ariaLabel={isRunning ? 'Pause timer' : 'Start timer'}
       />
 
-      {/* Info Text */}
-      <p className="text-xs text-slate-500 text-center mt-2">
-        {isRunning ? 'Timer running' : currentTime === 0 ? 'Time expired' : 'Click play to start'}
-      </p>
     </div>
   )
 }
