@@ -2,8 +2,18 @@
 
 **Feature Branch**: `004-scorekeeping-timer`  
 **Created**: 2026-04-13  
-**Status**: Draft  
+**Status**: Clarified  
 **Input**: User description: "Create a timer on the top middle of the scorekeeping component, with a toggle switch to stop and start it."
+
+---
+
+## Clarifications
+
+### Session 2026-04-13
+
+- Q: Should timer duration be user-configurable in v1? → A: No, fixed default (10:00). Duration managed via backend/admin config, not user-facing.
+- Q: What should timer display on initial page load? → A: 10:00 (standard basketball quarter default), not 0:00.
+- Q: How should running timer behave when browser tab loses focus? → A: Continue counting (accurate time, resource cost acceptable).
 
 ---
 
@@ -19,7 +29,7 @@ As a scorekeeper, I need to see a game timer displayed prominently at the top mi
 
 **Acceptance Scenarios**:
 
-1. **Given** user navigates to /scorekeeping page, **When** page loads, **Then** timer is displayed at the top-middle of the canvas in MM:SS format with default value shown (e.g., "0:00")
+1. **Given** user navigates to /scorekeeping page, **When** page loads, **Then** timer is displayed at the top-middle of the canvas in MM:SS format with default value shown (e.g., "10:00" for standard quarter)
 2. **Given** timer is displayed, **When** user views on mobile (320px), tablet (768px), and desktop (1920px), **Then** timer remains centered at top and is readable on all screen sizes
 3. **Given** timer is displayed, **When** user accesses timer element with keyboard, **Then** timer controls are focusable and keyboard-navigable
 
@@ -81,11 +91,11 @@ As a scorekeeper, I need visual feedback when the timer reaches 0:00 so I know t
 
 ## Edge Cases
 
-- What happens when timer is at 0:00 and user clicks toggle? (Should resume counting from 0:00, or allow reset?)
-- How does timer behave if page loses focus (browser tab switches)? (Should paused timer stay paused? Running timer continue?)
-- What happens if browser session/page is refreshed? (Should timer reset to 0:00, or persist state if available?)
-- How does timer behave on very slow networks? (Should display update smoothly, or might decrement in jumps?)
-- What if user tries to toggle timer very rapidly (spam clicking)? (Should bouncing/debounce prevent false starts?)
+- What happens when timer is at 0:00 and user clicks toggle? (Timer resumes counting from 0:00)
+- How does timer behave if page loses focus (browser tab switches)? (Running timer continues counting; paused timer stays paused)
+- What happens if browser session/page is refreshed? (Timer resets to 10:00 by default)
+- How does timer behave on very slow networks? (Display updates smoothly; may jump by 1+ seconds if connection delays spike)
+- What if user tries to toggle timer very rapidly (spam clicking)? (Debouncing prevents accidental double-toggles; second click within 100ms ignored)
 
 ---
 
@@ -96,7 +106,7 @@ As a scorekeeper, I need visual feedback when the timer reaches 0:00 so I know t
 - **FR-001**: Timer component MUST display current time in MM:SS format (minutes:seconds with leading zeros)
 - **FR-002**: Timer MUST be positioned at the top-center of the scorekeeping canvas
 - **FR-003**: Timer MUST have a visible toggle switch/button to start and stop the countdown
-- **FR-004**: Timer MUST support countdown from any starting time (configurable duration, e.g., 10:00 for quarter, or custom)
+- **FR-004**: Timer MUST display initial duration of 10:00 (standard basketball quarter) on page load; duration is backend-managed and not user-configurable in v1
 - **FR-005**: Timer MUST accurately count down at regular 1-second intervals when running
 - **FR-006**: Timer toggle MUST provide clear visual state indication (e.g., "Play" icon vs. "Pause" icon)
 - **FR-007**: Timer toggle MUST be keyboard accessible (Tab navigable, Enter/Space to activate)
@@ -138,7 +148,8 @@ As a scorekeeper, I need visual feedback when the timer reaches 0:00 so I know t
 ## Assumptions
 
 - **Architecture**: Timer will be implemented as a reusable React component integrated into BlankScoreKeepingCanvas or as a sibling component on the scorekeeping page (decision deferred to planning phase)
-- **Initial Time**: Timer starts at 0:00 by default; v1 does not include user-configurable timer duration (could be added in future)
+- **Initial Time**: Timer displays 10:00 (standard basketball quarter duration) on page load; not user-configurable in v1 (duration managed via backend/admin config)
+- **Page Focus**: Running timer continues counting when browser tab loses focus; paused timer remains paused
 - **No Backend**: Timer is client-side only in v1; no server-side time synchronization needed
 - **State Management**: Timer state managed locally in component; not persisted to database or local storage in v1
 - **Time Format**: Timer uses MM:SS format (assumes games < 100 minutes; no HH: prefix needed)
@@ -159,4 +170,4 @@ As a scorekeeper, I need visual feedback when the timer reaches 0:00 so I know t
 
 ---
 
-**Version**: 1.0.0 | **Created**: 2026-04-13 | **Status**: Draft → Ready for Clarification
+**Version**: 1.0.0 | **Created**: 2026-04-13 | **Status**: Clarified → Ready for Planning
