@@ -1,3 +1,4 @@
+'use client'
 import React from 'react'
 import { ScoreboardTimer } from './ScoreboardTimer'
 import { TimerToggle } from './TimerToggle'

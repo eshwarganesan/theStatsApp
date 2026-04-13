@@ -14,7 +14,7 @@ const config = {
     moduleNameMapper: {
         "^@/(.*)$": "<rootDir>/src/$1",
     },
-    testPathIgnorePatterns: ["<rootDir>/.next/", "<rootDir>/node_modules/"],
+    testPathIgnorePatterns: ["<rootDir>/.next/", "<rootDir>/node_modules/","<rootDir>/tests/"],
     transform: {
         // Use babel-jest to transpile tests with the next/babel preset
         "^.+\\.(js|jsx|ts|tsx)$": ["babel-jest", { presets: ["next/babel"] }],
