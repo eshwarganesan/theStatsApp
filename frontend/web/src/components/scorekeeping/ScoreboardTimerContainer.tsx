@@ -12,7 +12,7 @@ import { TIMER_CONSTANTS } from '@/constants/timer'
  * Manages countdown state with 1-second intervals. Continues counting
  * even when page tab loses focus. Stops automatically at 0:00.
  */
-function useTimer(initialTime: number = 600): UseTimerReturn {
+export function useTimer(initialTime: number = 600): UseTimerReturn {
   // Initialize state with Date.now() - called once during component mount
   const [state, setState] = React.useState<TimerState>(() => ({
     currentTime: initialTime,
