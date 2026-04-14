@@ -238,8 +238,7 @@ describe('ScoreboardTimerContainer - User Story Integration Tests', () => {
       expect(downArrows[1]).toHaveAttribute('aria-label', 'Decrement seconds')
     })
 
-    it('should support keyboard operation via Enter on buttons', async () => {
-      const user = userEvent.setup()
+    it('should support keyboard operation via Enter on buttons', () => {
       render(<ScoreboardTimerContainer initialTime={600} />)
       
       const upArrows = screen.getAllByLabelText(/Increment/i)
@@ -254,8 +253,7 @@ describe('ScoreboardTimerContainer - User Story Integration Tests', () => {
       expect(screen.getByRole('status')).toHaveTextContent('11:00')
     })
 
-    it('should support keyboard operation via Space on buttons', async () => {
-      const user = userEvent.setup()
+    it('should support keyboard operation via Space on buttons', () => {
       render(<ScoreboardTimerContainer initialTime={600} />)
       
       const upArrows = screen.getAllByLabelText(/Increment/i)

@@ -180,8 +180,7 @@ describe('ArrowButton Component', () => {
       expect(mockOnClick).toHaveBeenCalled()
     })
 
-    it('should call onClick when Space key is pressed', async () => {
-      const user = userEvent.setup()
+    it('should call onClick when Space key is pressed', () => {
       render(
         <ArrowButton
           direction="up"
@@ -263,7 +262,6 @@ describe('ArrowButton Component', () => {
         />
       )
       const button = container.querySelector('button') as HTMLElement
-      const style = window.getComputedStyle(button)
       // h-12 is 3rem = 48px (at default font-size 16px)
       expect(button).toHaveClass('h-12')
     })
