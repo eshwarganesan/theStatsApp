@@ -20,7 +20,7 @@ User can click up/down arrow buttons on the left side of the timer display to in
 1. **Given** timer is paused at 10:00, **When** user clicks the up arrow on the left of timer, **Then** timer displays 11:00
 2. **Given** timer is paused at 10:00, **When** user clicks the down arrow on the left of timer, **Then** timer displays 09:00
 3. **Given** timer is paused at 01:30, **When** user clicks the down arrow on the left twice, **Then** timer displays 00:30 (seconds unchanged)
-4. **Given** timer is paused at 59:45, **When** user clicks the up arrow on the left, **Then** timer displays 60:45 or wraps (clarification needed on max)
+4. **Given** timer is paused at 59:45, **When** user clicks the up arrow on the left, **Then** timer stays at 59:45 (up arrow disabled, cannot exceed 59:59)
 
 ---
 
@@ -37,7 +37,7 @@ User can click up/down arrow buttons on the right side of the timer display to i
 1. **Given** timer is paused at 10:00, **When** user clicks the up arrow on the right of timer, **Then** timer displays 10:01
 2. **Given** timer is paused at 10:00, **When** user clicks the down arrow on the right of timer, **Then** timer displays 09:59
 3. **Given** timer is paused at 10:30, **When** user clicks the down arrow on the right twice, **Then** timer displays 10:28 (minutes unchanged)
-4. **Given** timer is paused at 10:59, **When** user clicks the up arrow on the right, **Then** timer displays 10:00 or increments minutes (clarification needed on wrap behavior)
+4. **Given** timer is paused at 10:59, **When** user clicks the up arrow on the right, **Then** timer displays 10:00 (seconds wrap at 60, no minute carry-over)
 
 ---
 
@@ -77,14 +77,14 @@ Arrow buttons are positioned on the left (minutes) and right (seconds) sides of 
 
 ### Edge Cases
 
-- What happens when user tries to increment minutes past 59 or a logical maximum?
-- What happens when user tries to decrement below 00:00?
-- What happens if user rapidly clicks arrows multiple times in succession?
-- What happens if timer is paused at 00:00 and user clicks down arrow on minutes?
-- What happens if user adjusts seconds from 59 to 00 - does it wrap or is there a boundary?
-- [NEEDS CLARIFICATION: What is the maximum timer duration supported?]
-- [NEEDS CLARIFICATION: Should there be a boundary at 00:00 (cannot go negative)?]
-- [NEEDS CLARIFICATION: Should minutes wrap at 60 minutes or allow unlimited minutes?]
+- When user tries to increment minutes at 59:xx → up arrow is disabled, stays at 59:xx (cannot exceed 59:59)
+- When user tries to decrement below 00:00 → down arrow is disabled, stays at 00:00 (cannot go negative)
+- When user rapidly clicks arrows multiple times in succession → each click increments/decrements by exactly 1 unit (no acceleration)
+- Timer is paused at 00:00 and user clicks down arrow on minutes → no change, down arrow is disabled
+- User adjusts seconds from 59 to 00 → clicking up on seconds goes from 59 → 00 → 01 (wraps at 60, rolls to next minute is deferred)
+- Maximum timer duration is 59:59 (standard timer maximum)
+- Boundary at 00:00 is enforced (cannot go negative)
+- Minutes cap at 59 (no wrap, no unlimited)
 
 ## Requirements *(mandatory)*
 
@@ -103,7 +103,9 @@ Arrow buttons are positioned on the left (minutes) and right (seconds) sides of 
 - **FR-011**: Arrow buttons MUST meet 44px minimum touch target size on mobile devices
 - **FR-012**: System MUST immediately display updated time on button click (MM:SS format maintained)
 - **FR-013**: Adjustments MUST work independently - changing minutes does not affect seconds and vice versa
-- **FR-014**: System MUST prevent timer from going into negative time (cannot go below 00:00)
+- **FR-014**: System MUST prevent timer from going below 00:00 (down arrow disabled at 00:00)
+- **FR-015**: System MUST prevent timer minutes from exceeding 59 (up arrow disabled at 59:xx)
+- **FR-016**: System MUST cap maximum timer duration at 59:59
 
 ### Key Entities
 
@@ -120,21 +122,23 @@ Success criteria are measurable, technology-agnostic outcomes that verify featur
 3. **Buttons enabled only when paused** - Arrow buttons are visually enabled and fully interactive when timer is in paused state
 4. **Keyboard navigation works** - User can Tab to arrow buttons and press Enter/Space to activate (same effect as click)
 5. **Touch targets meet accessibility requirement** - All arrow buttons are ≥44px high and ≥44px wide on mobile devices
-6. **Time never goes negative** - Clicking down arrow does not result in negative time displayed (stops at 00:00)
-7. **Time stays within valid range** - Adjusted time remains in MM:SS format with no overflow/underflow errors
-8. **Independent adjustment of minutes and seconds** - Adjusting minutes does not change seconds, and vice versa
-9. **Integration with existing timer** - Adjustment works seamlessly with existing play/pause toggle and countdown display
-10. **Responsive layout maintained** - Arrow buttons are visible and functional on mobile (320px+), tablet (768px+), and desktop (1920px+) viewports
+6. **Time never goes below 00:00** - Down arrow at 00:00 is disabled, timer cannot display negative values
+7. **Minutes maximum is 59:59** - Up arrow at 59:xx is disabled, minutes cannot exceed 59
+8. **Time stays within valid range** - Adjusted time always in MM:SS format (00:00 to 59:59)
+9. **Independent adjustment of minutes and seconds** - Adjusting minutes does not change seconds, and vice versa
+10. **Integration with existing timer** - Adjustment works seamlessly with existing play/pause toggle and countdown display
+11. **Responsive layout maintained** - Arrow buttons are visible and functional on mobile (320px+), tablet (768px+), and desktop (1920px+) viewports
 
 ## Assumptions
 
-- Timer adjustment arrows are only enabled when timer is not counting down (paused state)
-- Maximum timer duration is not explicitly limited, but [NEEDS CLARIFICATION] on practical maximum (59:59, 99:59, or unlimited?)
-- Timer cannot display negative values (stops at 00:00)
-- Rapid successive clicks on arrows are handled (no debounce specified, so each click increments/decrements by 1)
+- Timer adjustment arrows are only enabled when timer is in paused state
+- Maximum timer duration is 59:59 (standard timer maximum) - minutes capped at 59, seconds at 59
+- Timer cannot display negative values (minimum is 00:00, down arrow disabled at boundary)
+- Rapid successive clicks on arrows are handled (each click increments/decrements by exactly 1)
 - Adjustments persist until timer starts counting or is reset
-- No sound/haptic feedback specified for button clicks (Feature 004 limitation applies)
-- Integration with Feature 004 (Scorekeeping Timer) is required - arrows are added to existing `ScoreboardTimerContainer`
+- No sound/haptic feedback for button clicks (deferred to Feature 004 enhancement)
+- Integration with Feature 004 (Scorekeeping Timer) required - arrows added to `ScoreboardTimerContainer`
+- Seconds wrap at 60 (10:59 + 1 sec = 10:00, no minute carry-over in v1)
 
 ## Out of Scope
 
@@ -144,9 +148,18 @@ Success criteria are measurable, technology-agnostic outcomes that verify featur
 - Undo/redo for adjustments (simple increment/decrement only)
 - Drag-to-adjust interface (arrows only as specified)
 
+## Clarifications
+
+### Session 2026-04-13
+
+- Q: Maximum timer duration? → A: 59:59 (standard timer max, minutes cap at 59)
+- Q: Boundary at 00:00 (cannot go negative)? → A: Yes, stop at 00:00 (down arrow disabled)
+- Q: Minute wrapping at 60? → A: Cap at 59 (up arrow disabled, no wrap or unlimited)
+
 ## Known Limitations (v1)
 
 - No animation on time change (instant update)
 - No audio feedback (visual only)
-- No haptic feedback on touch (Feature 004 limitation)
+- No haptic feedback on touch (deferred enhancement)
 - Single-increment only (no hold-to-repeat or acceleration)
+- Seconds wrap but no minute carry-over (10:59 + 1 sec = 10:00, not 11:00)
