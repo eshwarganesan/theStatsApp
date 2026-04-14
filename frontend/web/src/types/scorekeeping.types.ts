@@ -58,6 +58,20 @@ export interface TimerState {
 }
 
 /**
+ * Return type for useTimer hook
+ *
+ * @interface UseTimerReturn
+ */
+export interface UseTimerReturn extends TimerState {
+  toggle: () => void
+  reset: () => void
+  incrementMinutes: () => void
+  decrementMinutes: () => void
+  incrementSeconds: () => void
+  decrementSeconds: () => void
+}
+
+/**
  * Props for ScoreboardTimer display component
  *
  * @interface ScoreboardTimerProps
@@ -80,6 +94,19 @@ export interface TimerToggleProps {
   onToggle: () => void
   disabled?: boolean
   ariaLabel?: string
+  className?: string
+}
+
+/**
+ * Props for ArrowButton adjustment control component
+ *
+ * @interface ArrowButtonProps
+ */
+export interface ArrowButtonProps {
+  direction: 'up' | 'down'
+  unit: 'minutes' | 'seconds'
+  onClick: () => void
+  disabled: boolean
   className?: string
 }
 

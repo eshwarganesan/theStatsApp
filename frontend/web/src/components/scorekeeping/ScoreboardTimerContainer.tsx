@@ -2,7 +2,9 @@
 import React from 'react'
 import { ScoreboardTimer } from './ScoreboardTimer'
 import { TimerToggle } from './TimerToggle'
-import { ScoreboardTimerContainerProps, TimerState } from '@/types/scorekeeping.types'
+import { ArrowButton } from './ArrowButton'
+import { ScoreboardTimerContainerProps, TimerState, UseTimerReturn } from '@/types/scorekeeping.types'
+import { TIMER_CONSTANTS } from '@/constants/timer'
 
 /**
  * useTimer: Custom hook for timer countdown logic
@@ -10,7 +12,7 @@ import { ScoreboardTimerContainerProps, TimerState } from '@/types/scorekeeping.
  * Manages countdown state with 1-second intervals. Continues counting
  * even when page tab loses focus. Stops automatically at 0:00.
  */
-function useTimer(initialTime: number = 600) {
+export function useTimer(initialTime: number = 600): UseTimerReturn {
   // Initialize state with Date.now() - called once during component mount
   const [state, setState] = React.useState<TimerState>(() => ({
     currentTime: initialTime,
@@ -88,10 +90,66 @@ function useTimer(initialTime: number = 600) {
     })
   }, [initialTime])
 
+  /**
+   * Increment minutes by 1 (capped at 59:59)
+   */
+  const incrementMinutes = React.useCallback(() => {
+    setState((prevState) => {
+      const newTime = Math.min(
+        prevState.currentTime + TIMER_CONSTANTS.SECONDS_PER_MINUTE,
+        TIMER_CONSTANTS.MAX_TIME_SECONDS
+      )
+      return { ...prevState, currentTime: newTime }
+    })
+  }, [])
+
+  /**
+   * Decrement minutes by 1 (floored at 00:00)
+   */
+  const decrementMinutes = React.useCallback(() => {
+    setState((prevState) => {
+      const newTime = Math.max(
+        prevState.currentTime - TIMER_CONSTANTS.SECONDS_PER_MINUTE,
+        TIMER_CONSTANTS.MIN_TIME_SECONDS
+      )
+      return { ...prevState, currentTime: newTime }
+    })
+  }, [])
+
+  /**
+   * Increment seconds by 1 (capped at 59:59)
+   */
+  const incrementSeconds = React.useCallback(() => {
+    setState((prevState) => {
+      const newTime = Math.min(
+        prevState.currentTime + 1,
+        TIMER_CONSTANTS.MAX_TIME_SECONDS
+      )
+      return { ...prevState, currentTime: newTime }
+    })
+  }, [])
+
+  /**
+   * Decrement seconds by 1 (floored at 00:00)
+   */
+  const decrementSeconds = React.useCallback(() => {
+    setState((prevState) => {
+      const newTime = Math.max(
+        prevState.currentTime - 1,
+        TIMER_CONSTANTS.MIN_TIME_SECONDS
+      )
+      return { ...prevState, currentTime: newTime }
+    })
+  }, [])
+
   return {
     ...state,
     toggle,
     reset,
+    incrementMinutes,
+    decrementMinutes,
+    incrementSeconds,
+    decrementSeconds,
   }
 }
 
@@ -108,35 +166,89 @@ export const ScoreboardTimerContainer: React.FC<ScoreboardTimerContainerProps> =
   className = '',
   onTimeUpdate,
 }) => {
-  const { currentTime, isRunning, toggle } = useTimer(initialTime)
-  // reset is available for future use (e.g., exposed via ref)
+  const {
+    currentTime,
+    isRunning,
+    toggle,
+    incrementMinutes,
+    decrementMinutes,
+    incrementSeconds,
+    decrementSeconds,
+  } = useTimer(initialTime)
+
+  // Determine disabled states based on boundaries
+  const isMinutesAtMax = currentTime >= TIMER_CONSTANTS.MAX_TIME_SECONDS
+  const isMinutesAtMin = currentTime < TIMER_CONSTANTS.SECONDS_PER_MINUTE
+  const isSecondsAtMax = currentTime >= TIMER_CONSTANTS.MAX_TIME_SECONDS
+  const isSecondsAtMin = currentTime === TIMER_CONSTANTS.MIN_TIME_SECONDS
 
   return (
     <div
       className={`
-        flex flex-col items-center gap-4
+        flex flex-row items-center justify-center gap-6
         py-4 px-2
         ${className}
       `}
       role="region"
       aria-label="Game timer control"
     >
-      {/* Timer Display */}
-      <ScoreboardTimer
-        initialTime={initialTime}
-        isRunning={isRunning}
-        currentTime={currentTime}
-        onTimeUpdate={onTimeUpdate}
-      />
+      {/* Left Column: Minutes Adjustment */}
+      <div className="flex flex-col items-center gap-2">
+        <ArrowButton
+          direction="up"
+          unit="minutes"
+          onClick={incrementMinutes}
+          disabled={isRunning || isMinutesAtMax}
+          className="text-slate-700"
+        />
+        <span className="text-xs font-semibold text-slate-600 uppercase tracking-wide">
+          Min
+        </span>
+        <ArrowButton
+          direction="down"
+          unit="minutes"
+          onClick={decrementMinutes}
+          disabled={isRunning || isMinutesAtMin}
+          className="text-slate-700"
+        />
+      </div>
 
-      {/* Toggle Button */}
-      <TimerToggle
-        isRunning={isRunning}
-        onToggle={toggle}
-        disabled={false}
-        ariaLabel={isRunning ? 'Pause timer' : 'Start timer'}
-      />
+      {/* Center Column: Timer Display and Control */}
+      <div className="flex flex-col items-center gap-3">
+        <ScoreboardTimer
+          initialTime={initialTime}
+          isRunning={isRunning}
+          currentTime={currentTime}
+          onTimeUpdate={onTimeUpdate}
+        />
+        <TimerToggle
+          isRunning={isRunning}
+          onToggle={toggle}
+          disabled={false}
+          ariaLabel={isRunning ? 'Pause timer' : 'Start timer'}
+        />
+      </div>
 
+      {/* Right Column: Seconds Adjustment */}
+      <div className="flex flex-col items-center gap-2">
+        <ArrowButton
+          direction="up"
+          unit="seconds"
+          onClick={incrementSeconds}
+          disabled={isRunning || isSecondsAtMax}
+          className="text-slate-700"
+        />
+        <span className="text-xs font-semibold text-slate-600 uppercase tracking-wide">
+          Sec
+        </span>
+        <ArrowButton
+          direction="down"
+          unit="seconds"
+          onClick={decrementSeconds}
+          disabled={isRunning || isSecondsAtMin}
+          className="text-slate-700"
+        />
+      </div>
     </div>
   )
 }
