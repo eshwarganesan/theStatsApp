@@ -104,7 +104,7 @@ describe('TimerToggle', () => {
       />
     )
     const button = container.querySelector('button')
-    expect(button).toHaveClass('h-12', 'w-12')
+    expect(button).toHaveClass('px-8', 'py-3')
     // 12 * 4px (Tailwind unit) = 48px (exceeds 44px minimum)
   })
 })

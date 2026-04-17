@@ -201,9 +201,6 @@ export const ScoreboardTimerContainer: React.FC<ScoreboardTimerContainerProps> =
           disabled={isRunning || isMinutesAtMax}
           className="text-slate-700"
         />
-        <span className="text-xs font-semibold text-slate-600 uppercase tracking-wide">
-          Min
-        </span>
         <ArrowButton
           direction="down"
           unit="minutes"
@@ -238,9 +235,6 @@ export const ScoreboardTimerContainer: React.FC<ScoreboardTimerContainerProps> =
           disabled={isRunning || isSecondsAtMax}
           className="text-slate-700"
         />
-        <span className="text-xs font-semibold text-slate-600 uppercase tracking-wide">
-          Sec
-        </span>
         <ArrowButton
           direction="down"
           unit="seconds"

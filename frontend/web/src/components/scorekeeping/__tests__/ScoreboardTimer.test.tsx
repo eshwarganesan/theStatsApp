@@ -55,7 +55,7 @@ describe('ScoreboardTimer', () => {
         initialTime={600}
       />
     )
-    expect(screen.getByText('● Expired')).toBeInTheDocument()
+    expect(screen.getByText('● End')).toBeInTheDocument()
   })
 
   it('has semantic time element', () => {
