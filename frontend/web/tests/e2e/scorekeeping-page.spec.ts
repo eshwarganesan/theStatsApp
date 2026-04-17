@@ -268,4 +268,45 @@ test.describe('Scorekeeping Page', () => {
       expect(timeAfterResume).not.toBe(timeAfterPause)
     })
   })
+
+  test.describe('Scorekeeping Timer Controls (Feature 006)', () => {
+    test('should increment minutes when up arrow is clicked', async ({ page }) => {
+      await page.goto('/scorekeeping')
+      const initialTime = await page.getByRole('status').textContent()
+      expect(initialTime).toBe('10:00')
+
+      const incrementMinutesButton = page.getByRole('button', { name: /increment minutes/i })
+      await incrementMinutesButton.click()
+
+      const updatedTime = await page.getByRole('status').textContent()
+      expect(updatedTime).toBe('11:00')
+    })
+
+    test('should decrement minutes when down arrow is clicked', async ({ page }) => {
+      await page.goto('/scorekeeping')
+      const decrementMinutesButton = page.getByRole('button', { name: /decrement minutes/i })
+      await decrementMinutesButton.click()
+
+      const updatedTime = await page.getByRole('status').textContent()
+      expect(updatedTime).toBe('09:00')
+    })
+
+    test('should increment seconds when up arrow is clicked', async ({ page }) => {
+      await page.goto('/scorekeeping')
+      const incrementSecondsButton = page.getByRole('button', { name: /increment seconds/i })
+      await incrementSecondsButton.click()
+
+      const updatedTime = await page.getByRole('status').textContent()
+      expect(updatedTime).toBe('10:01')
+    })
+
+    test('arrow buttons are disabled when timer is running', async ({ page }) => {
+      await page.goto('/scorekeeping')
+      const playButton = page.getByRole('button', { name: /start timer/i })
+      await playButton.click()
+
+      const incrementButton = page.getByRole('button', { name: /increment minutes/i })
+      await expect(incrementButton).toBeDisabled()
+    })
+  })
 })
